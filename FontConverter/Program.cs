@@ -25,7 +25,8 @@ namespace FontConverter
             var unpackProcess = Process.Start("HTFont.exe", "--unpack " + args[0]);
             unpackProcess.WaitForExit();
             var directory = args[0] + ".decompressed_font";
-            string text = File.ReadAllText("characters.txt");
+            
+            string text = File.ReadAllText(Directory.GetCurrentDirectory() + @"\characters.txt");
             int nameLenght = text.Length.ToString().Length;
             int chr_id = 0;
             PixelFormat format = System.Drawing.Imaging.PixelFormat.Format32bppRgb;
