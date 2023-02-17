@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FontConverter", "TextToImage\FontConverter.csproj", "{194442D0-15AA-44DC-9BD3-5E956040D32B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FontConverter", "FontConverter\FontConverter.csproj", "{C0319BE6-B84E-4F56-BDA1-4CFF44155DAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{194442D0-15AA-44DC-9BD3-5E956040D32B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{194442D0-15AA-44DC-9BD3-5E956040D32B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{194442D0-15AA-44DC-9BD3-5E956040D32B}.Debug|x64.ActiveCfg = Debug|x64
-		{194442D0-15AA-44DC-9BD3-5E956040D32B}.Debug|x64.Build.0 = Debug|x64
-		{194442D0-15AA-44DC-9BD3-5E956040D32B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{194442D0-15AA-44DC-9BD3-5E956040D32B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{194442D0-15AA-44DC-9BD3-5E956040D32B}.Release|x64.ActiveCfg = Release|x64
-		{194442D0-15AA-44DC-9BD3-5E956040D32B}.Release|x64.Build.0 = Release|x64
+		{C0319BE6-B84E-4F56-BDA1-4CFF44155DAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0319BE6-B84E-4F56-BDA1-4CFF44155DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0319BE6-B84E-4F56-BDA1-4CFF44155DAA}.Debug|x64.ActiveCfg = Debug|x64
+		{C0319BE6-B84E-4F56-BDA1-4CFF44155DAA}.Debug|x64.Build.0 = Debug|x64
+		{C0319BE6-B84E-4F56-BDA1-4CFF44155DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0319BE6-B84E-4F56-BDA1-4CFF44155DAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0319BE6-B84E-4F56-BDA1-4CFF44155DAA}.Release|x64.ActiveCfg = Release|x64
+		{C0319BE6-B84E-4F56-BDA1-4CFF44155DAA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
