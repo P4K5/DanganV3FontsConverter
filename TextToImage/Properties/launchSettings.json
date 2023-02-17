@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FontsConverter": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\Users\\patry\\source\\repos\\TextToImage\\TextToImage\\v3_font01_2.stx \"D:\\Users\\patry\\source\\repos\\TextToImage\\TextToImage\\FOT-Rodin Pro EB.otf\""
+    }
+  }
+}

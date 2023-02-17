@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/TextToImage/v3_font01_2.srdv
+/TextToImage/v3_font01_2.stx
+/TextToImage/FOT-Rodin Pro EB.otf
