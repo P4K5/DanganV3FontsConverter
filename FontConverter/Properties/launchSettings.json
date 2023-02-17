@@ -2,7 +2,7 @@
   "profiles": {
     "FontsConverter": {
       "commandName": "Project",
-      "commandLineArgs": "D:\\Users\\patry\\source\\repos\\TextToImage\\TextToImage\\v3_font01_2.stx \"D:\\Users\\patry\\source\\repos\\TextToImage\\TextToImage\\FOT-Rodin Pro EB.otf\""
+      "commandLineArgs": "D:\\Users\\patry\\source\\repos\\DanganV3FontsConverter\\FontConverter\\v3_font01_2.stx \"D:\\Users\\patry\\source\\repos\\DanganV3FontsConverter\\FontConverter\\FOT-Rodin Pro EB.otf\""
     }
   }
 }
