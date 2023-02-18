@@ -33,7 +33,7 @@ namespace FontConverter
             SizeF size;
             PrivateFontCollection fontCollection = new PrivateFontCollection();
             fontCollection.AddFontFile(args[1]);
-            Font font = new Font(fontCollection.Families[0], 96f, GraphicsUnit.Pixel);
+            Font font = new Font(fontCollection.Families[0], 192f, GraphicsUnit.Pixel);
 
             var di = new DirectoryInfo(directory);
             foreach (FileInfo file in di.GetFiles())
@@ -76,108 +76,110 @@ namespace FontConverter
                     }
                 }
 
-                using (var bitmap = new Bitmap((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height), format))
+                using (var bitmap192 = new Bitmap((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height), format))
                 {
-                    using (Graphics graphics = Graphics.FromImage(bitmap))
+                    using (Graphics graphics = Graphics.FromImage(bitmap192))
                     {
                         graphics.DrawString(chr, font, Brushes.White, 0, 0);
                     }
-
-                    int topX = 0, bottomX = 0, topY = 0, bottomY = 0;
-                    int width = bitmap.Width - 1, height = bitmap.Height - 1;
-
-                    for (int x = 0; x < width; x++)
+                    using(var bitmap = new Bitmap(bitmap192, bitmap192.Width/2, bitmap192.Height/2))
                     {
-                        for (int y = 0; y < height; y++)
-                        {
-                            var color = bitmap.GetPixel(x, y);
-                            if (color.R != 0)
-                            {
-                                topX = x;
-                                break;
-                            }
-                        }
-                        if (topX != 0)
-                        {
-                            break;
-                        }
-                    }
+                        int topX = 0, bottomX = 0, topY = 0, bottomY = 0;
+                        int width = bitmap.Width - 1, height = bitmap.Height - 1;
 
-                    for (int x = width; x > topX; x--)
-                    {
-                        for (int y = 0; y < height; y++)
-                        {
-                            var color = bitmap.GetPixel(x, y);
-                            if (color.R != 0)
-                            {
-                                bottomX = x;
-                                break;
-                            }
-                        }
-                        if (bottomX != 0)
-                        {
-                            break;
-                        }
-                    }
-
-                    for (int y = 0; y < height; y++)
-                    {
                         for (int x = 0; x < width; x++)
                         {
-                            var color = bitmap.GetPixel(x, y);
-                            if (color.R != 0)
+                            for (int y = 0; y < height; y++)
                             {
-                                topY = y;
+                                var color = bitmap.GetPixel(x, y);
+                                if (color.R != 0)
+                                {
+                                    topX = x;
+                                    break;
+                                }
+                            }
+                            if (topX != 0)
+                            {
                                 break;
                             }
                         }
-                        if (topY != 0)
-                        {
-                            break;
-                        }
-                    }
 
-                    for (int y = height; y > topY; y--)
-                    {
-                        for (int x = 0; x < width; x++)
+                        for (int x = width; x > topX; x--)
                         {
-                            var color = bitmap.GetPixel(x, y);
-                            if (color.R != 0)
+                            for (int y = 0; y < height; y++)
                             {
-                                bottomY = y;
+                                var color = bitmap.GetPixel(x, y);
+                                if (color.R != 0)
+                                {
+                                    bottomX = x;
+                                    break;
+                                }
+                            }
+                            if (bottomX != 0)
+                            {
                                 break;
                             }
                         }
-                        if (bottomY != 0)
+
+                        for (int y = 0; y < height; y++)
                         {
-                            break;
+                            for (int x = 0; x < width; x++)
+                            {
+                                var color = bitmap.GetPixel(x, y);
+                                if (color.R != 0)
+                                {
+                                    topY = y;
+                                    break;
+                                }
+                            }
+                            if (topY != 0)
+                            {
+                                break;
+                            }
                         }
-                    }
 
-                    string name = directory + @"\" + chr_id.ToString().PadLeft(nameLenght, '0');
+                        for (int y = height; y > topY; y--)
+                        {
+                            for (int x = 0; x < width; x++)
+                            {
+                                var color = bitmap.GetPixel(x, y);
+                                if (color.R != 0)
+                                {
+                                    bottomY = y;
+                                    break;
+                                }
+                            }
+                            if (bottomY != 0)
+                            {
+                                break;
+                            }
+                        }
 
-                    GlyphInfoJson glyph = new GlyphInfoJson();
-                    glyph.Glyph = chr[0];
-                    glyph.Kerning = new()
+                        string name = directory + @"\" + chr_id.ToString().PadLeft(nameLenght, '0');
+
+                        GlyphInfoJson glyph = new GlyphInfoJson();
+                        glyph.Glyph = chr[0];
+                        glyph.Kerning = new()
                     {
                         {"Left", topX - 17},
                         {"Right", width - bottomX - 17},
                         {"Vertical", topY - 18 }
                     };
 
-                    string json = JsonSerializer.Serialize(glyph);
-                    File.WriteAllText(name + ".json", json);
+                        string json = JsonSerializer.Serialize(glyph);
+                        File.WriteAllText(name + ".json", json);
 
-                    Bitmap croppedImage = new Bitmap(bitmap);
-                    Rectangle cropRect = new Rectangle(topX, topY, bottomX - topX + 1, bottomY - topY + 1);
-                    croppedImage = croppedImage.Clone(cropRect, format);
-                    croppedImage.Save(name + ".bmp", ImageFormat.Bmp);
-                    chr_id++;
+                        Bitmap croppedImage = new Bitmap(bitmap);
+                        Rectangle cropRect = new Rectangle(topX, topY, bottomX - topX + 1, bottomY - topY + 1);
+                        croppedImage = croppedImage.Clone(cropRect, format);
+                        croppedImage.Save(name + ".bmp", ImageFormat.Bmp);
+                        chr_id++;
+                    }
                 }
             }
 
             var packProcess = Process.Start("HTFont.exe", "--pack " + directory);
-            unpackProcess.WaitForExit();
+            packProcess.WaitForExit();
         }
     }
 }
