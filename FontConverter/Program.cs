@@ -160,11 +160,11 @@ namespace FontConverter
                         GlyphInfoJson glyph = new GlyphInfoJson();
                         glyph.Glyph = chr[0];
                         glyph.Kerning = new()
-                    {
-                        {"Left", topX - 17},
-                        {"Right", width - bottomX - 17},
-                        {"Vertical", topY - 18 }
-                    };
+                        {
+                            {"Left", topX - 17},
+                            {"Right", width - bottomX - 17},
+                            {"Vertical", topY - 18 }
+                        };
 
                         string json = JsonSerializer.Serialize(glyph);
                         File.WriteAllText(name + ".json", json);
