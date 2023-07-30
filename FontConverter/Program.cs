@@ -16,26 +16,39 @@ namespace FontConverter
     {
         static void Main(string[] args)
         {
-            if (args.Length != 2)
-            {
-                Console.WriteLine("FONTCONVERTER stx_file font_file");
-                return;
-            }
+            Console.Write("Type the path to the font file: ");
+            String fontFileDirectory = Console.ReadLine();
+            String fontFileName = Path.GetFileName(fontFileDirectory);
+            String directoryPath = Path.GetDirectoryName(fontFileDirectory) + @"/";
 
-            var unpackProcess = Process.Start("HTFont.exe", "--unpack " + args[0]);
+            String stxFileName = fontFileName.Split('.')[0] + ".stx";
+            String srdvFileName = fontFileName.Split('.')[0] + ".srdv";
+
+            String charsetFileName = directoryPath + "charset.txt";
+            String HTPath = File.ReadAllText(directoryPath + "HTpath.txt");
+
+            String tempDirectory = Path.GetTempPath() + @"DanganV3FontsConverter\";
+
+            Directory.CreateDirectory(tempDirectory);
+
+            File.Copy(directoryPath + stxFileName, tempDirectory + stxFileName, true);
+            File.Copy(directoryPath + srdvFileName, tempDirectory + srdvFileName, true);
+
+
+            var unpackProcess = Process.Start(HTPath, "font extract -f " + tempDirectory + stxFileName);
             unpackProcess.WaitForExit();
-            var directory = args[0] + ".decompressed_font";
-            
-            string text = File.ReadAllText(Directory.GetCurrentDirectory() + @"\characters.txt");
+            var decompressedFontDirectory = tempDirectory + stxFileName + ".decompressed_font";
+
+            string text = File.ReadAllText(directoryPath + "charset.txt");
             int nameLenght = text.Length.ToString().Length;
             int chr_id = 0;
             PixelFormat format = System.Drawing.Imaging.PixelFormat.Format32bppRgb;
             SizeF size;
             PrivateFontCollection fontCollection = new PrivateFontCollection();
-            fontCollection.AddFontFile(args[1]);
+            fontCollection.AddFontFile(fontFileDirectory);
             Font font = new Font(fontCollection.Families[0], 192f, GraphicsUnit.Pixel);
 
-            var di = new DirectoryInfo(directory);
+            var di = new DirectoryInfo(decompressedFontDirectory);
             foreach (FileInfo file in di.GetFiles())
             {
                 if(file.Name != "__font_info.json")
@@ -46,7 +59,7 @@ namespace FontConverter
 
             using (var bitmap = new Bitmap(33, 98, format))
             {
-                string name = directory + @"\" + chr_id.ToString().PadLeft(nameLenght, '0');
+                string name = decompressedFontDirectory + @"\" + chr_id.ToString().PadLeft(nameLenght, '0');
                 bitmap.Save(name + ".bmp", ImageFormat.Bmp);
 
                 GlyphInfoJson glyph = new GlyphInfoJson();
@@ -155,7 +168,7 @@ namespace FontConverter
                             }
                         }
 
-                        string name = directory + @"\" + chr_id.ToString().PadLeft(nameLenght, '0');
+                        string name = decompressedFontDirectory + @"\" + chr_id.ToString().PadLeft(nameLenght, '0');
 
                         GlyphInfoJson glyph = new GlyphInfoJson();
                         glyph.Glyph = chr[0];
@@ -178,8 +191,15 @@ namespace FontConverter
                 }
             }
 
-            var packProcess = Process.Start("HTFont.exe", "--pack " + directory);
+            var packProcess = Process.Start(HTPath, "font pack -f" + decompressedFontDirectory);
             packProcess.WaitForExit();
+
+            File.Copy(tempDirectory + stxFileName, directoryPath + stxFileName, true);
+            File.Copy(tempDirectory + srdvFileName, directoryPath + srdvFileName, true);
+
+            Directory.Delete(tempDirectory, true);
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
         }
     }
 }
