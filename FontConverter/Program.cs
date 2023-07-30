@@ -198,8 +198,6 @@ namespace FontConverter
             File.Copy(tempDirectory + srdvFileName, directoryPath + srdvFileName, true);
 
             Directory.Delete(tempDirectory, true);
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
         }
     }
 }
