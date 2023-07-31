@@ -18,6 +18,7 @@ namespace FontConverter
         {
             Console.Write("Type the path to the font file: ");
             String fontFileDirectory = Console.ReadLine();
+            //String fontFileDirectory = @"C:\Users\patry\Desktop\test\plcon\game_font01_6_US.spc.decompressed\v3_font01_6.ttf";
             String fontFileName = Path.GetFileName(fontFileDirectory);
             String directoryPath = Path.GetDirectoryName(fontFileDirectory) + @"/";
 
@@ -39,6 +40,27 @@ namespace FontConverter
             unpackProcess.WaitForExit();
             var decompressedFontDirectory = tempDirectory + stxFileName + ".decompressed_font";
 
+            bool smallFont = false;
+            var fontFiles = Directory.GetFiles(decompressedFontDirectory);
+            foreach (var fontFile in fontFiles)
+            {
+                if (Path.GetFileName(fontFile).Contains(".json"))
+                {
+                    string jsonData = File.ReadAllText(fontFile);
+                    var fontData = JsonSerializer.Deserialize<GlyphInfoJson>(jsonData);
+                    if (fontData.Glyph == 'A')
+                    {
+                        using (var AImg = System.Drawing.Image.FromFile(fontFile.Replace(".json", ".bmp")))
+                        {
+                            smallFont = AImg.Height < 50;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            float fontSize = smallFont ? 88f : 192f;
+
             string text = File.ReadAllText(directoryPath + "charset.txt");
             int nameLenght = text.Length.ToString().Length;
             int chr_id = 0;
@@ -46,18 +68,18 @@ namespace FontConverter
             SizeF size;
             PrivateFontCollection fontCollection = new PrivateFontCollection();
             fontCollection.AddFontFile(fontFileDirectory);
-            Font font = new Font(fontCollection.Families[0], 192f, GraphicsUnit.Pixel);
+            Font font = new Font(fontCollection.Families[0], fontSize, GraphicsUnit.Pixel);
 
             var di = new DirectoryInfo(decompressedFontDirectory);
             foreach (FileInfo file in di.GetFiles())
             {
-                if(file.Name != "__font_info.json")
+                if (file.Name != "__font_info.json")
                 {
                     file.Delete();
                 }
             }
 
-            using (var bitmap = new Bitmap(33, 98, format))
+            using (var bitmap = (smallFont) ? new Bitmap(16, 47, format) : new Bitmap(33, 98, format))
             {
                 string name = decompressedFontDirectory + @"\" + chr_id.ToString().PadLeft(nameLenght, '0');
                 bitmap.Save(name + ".bmp", ImageFormat.Bmp);
@@ -95,7 +117,7 @@ namespace FontConverter
                     {
                         graphics.DrawString(chr, font, Brushes.White, 0, 0);
                     }
-                    using(var bitmap = new Bitmap(bitmap192, bitmap192.Width/2, bitmap192.Height/2))
+                    using (var bitmap = new Bitmap(bitmap192, bitmap192.Width / 2, bitmap192.Height / 2))
                     {
                         int topX = 0, bottomX = 0, topY = 0, bottomY = 0;
                         int width = bitmap.Width - 1, height = bitmap.Height - 1;
@@ -172,12 +194,24 @@ namespace FontConverter
 
                         GlyphInfoJson glyph = new GlyphInfoJson();
                         glyph.Glyph = chr[0];
-                        glyph.Kerning = new()
+                        if (smallFont)
                         {
-                            {"Left", topX - 17},
-                            {"Right", width - bottomX - 17},
-                            {"Vertical", topY - 18 }
-                        };
+                            glyph.Kerning = new()
+                            {
+                                {"Left", topX - 8},
+                                {"Right", width - bottomX - 7},
+                                {"Vertical", topY - 11 }
+                            };
+                        }
+                        else
+                        {
+                            glyph.Kerning = new()
+                            {
+                                {"Left", topX - 17},
+                                {"Right", width - bottomX - 17},
+                                {"Vertical", topY - 18 }
+                            };
+                        }
 
                         string json = JsonSerializer.Serialize(glyph);
                         File.WriteAllText(name + ".json", json);
